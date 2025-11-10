@@ -1,9 +1,10 @@
 # Site name
-site_name: SITE NAME
+site_name: DE5 Module 5 Library-pipeline
 
 # Navigation menu
 nav:
   - Overview: index.md
+  - Architecture: architecture/index.md
 
 # Theme
 theme:
