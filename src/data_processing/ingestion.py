@@ -12,7 +12,7 @@ import traceback
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def load_csv(filepath):
+def load_csv(filepath, verify_fp=True):
     """Load CSV file with error handling.
     
     Args:
@@ -24,15 +24,16 @@ def load_csv(filepath):
     TODO: Add error handling and logging
     """
     # TODO: Implement this function
-    extension = filepath.split('.')[-1]
-    if extension != 'csv':
-        logger.error(f'Filepath {filepath} is not a .csv file!')
-        print(f'Filepath {filepath} is not a .csv file!')
-        raise ValueError(f'Filepath {filepath} is not a .csv file!')
+    if verify_fp:
+        extension = filepath.split('.')[-1]
+        if extension != 'csv':
+            logger.error(f'Filepath {filepath} is not a .csv file!')
+            print(f'Filepath {filepath} is not a .csv file!')
+            raise ValueError(f'Filepath {filepath} is not a .csv file!')
 
-    if not os.path.exists(filepath):
-        logger.error(f'Filepath {filepath} not found!')
-        raise FileNotFoundError(f'Filepath {filepath} not found')
+        if not os.path.exists(filepath):
+            logger.error(f'Filepath {filepath} not found!')
+            raise FileNotFoundError(f'Filepath {filepath} not found')
 
     try:
         data = pd.read_csv(filepath)

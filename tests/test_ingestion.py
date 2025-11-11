@@ -21,6 +21,10 @@ def test_load_csv_wrong_extension():
     with pytest.raises(ValueError):
         load_csv('data/circulatiton_data.xlsx')
 
+def test_load_csv_exception():
+    with pytest.raises(FileNotFoundError):
+        load_csv('data/circulation_data_non_existent.csv', verify_fp=False)
+
 def test_load_json_success():
     """Test loading real JSON file."""
     df = load_json('data/events_data.json')
