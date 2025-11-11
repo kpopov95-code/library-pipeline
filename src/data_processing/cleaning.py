@@ -101,7 +101,7 @@ def standardize_dates(df, date_columns, date_format='%Y-%m-%d'):
             continue
 
         try:
-            df[col] = pd.to_datetime(df[col], dayfirst=True, errors='coerce')
+            df[col] = pd.to_datetime(df[col], errors='coerce')
             logger.info(f"Standardized dates in column: {col}")
         except Exception as e:
             logger.error(f"Error standardizing dates in {col}: {e}")
