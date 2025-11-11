@@ -6,7 +6,8 @@ import pandas.testing as pdt
 from src.data_processing.cleaning import (
     remove_duplicates,
     handle_missing_values,
-    standardize_dates
+    standardize_dates,
+    standardise_isbn
 )
 
 # ========================================
@@ -37,6 +38,13 @@ def sample_df_with_dates():
     return pd.DataFrame({
         'id': [1,2,3,4],
         'date': ['2025-10-01', '2025-11-01', '2025-12-01', '2026-01-01']
+    })
+
+@pytest.fixture
+def sample_with_isbn():
+    return pd.DataFrame({
+        'id': [1,2,3],
+        'isbn': ['978-01-155-42290-0', '978-02-521-1248-7', '978-01-151-5389-2']
     })
 
 # ========================================
@@ -130,3 +138,14 @@ def test_standardize_dates(sample_df_with_dates):
         'date': dates
     })
     pdt.assert_frame_equal(result, expected)
+
+# ========================================
+# TESTS FOR standardize_isbn()
+# ========================================
+
+def test_standardise_isbn(sample_with_isbn):
+    result = standardise_isbn(sample_with_isbn, 'isbn')
+    expected = pd.DataFrame({
+        'id': [1,2,3],
+        'isbn': ['97801155422900', '9780252112487', '9780115153892']
+    })
