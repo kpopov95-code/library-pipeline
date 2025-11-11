@@ -24,23 +24,22 @@ def load_csv(filepath):
     TODO: Add error handling and logging
     """
     # TODO: Implement this function
-
-    if not os.path.exists(filepath):
-        logger.error(f'Filepath {filepath} not found!')
-        raise FileNotFoundError(f'Filepath {filepath} not found')
-
     extension = filepath.split('.')[-1]
     if extension != 'csv':
         logger.error(f'Filepath {filepath} is not a .csv file!')
         print(f'Filepath {filepath} is not a .csv file!')
-        raise
+        raise ValueError(f'Filepath {filepath} is not a .csv file!')
+
+    if not os.path.exists(filepath):
+        logger.error(f'Filepath {filepath} not found!')
+        raise FileNotFoundError(f'Filepath {filepath} not found')
 
     try:
         data = pd.read_csv(filepath)
         logger.info(f'Successfully loaded {filepath}')
         if data.empty:
             logger.error(f'{filepath} is empty')
-            raise
+            raise ValueError(f'{filepath} is empty')
         return data
 
     except Exception as e:
@@ -93,16 +92,17 @@ def load_excel(filepath):
         
     TODO: Add error handling and logging
     """
-    # Check if filepath exists
-    if not os.path.exists(filepath):
-        logger.error(f'Filepath {filepath} not found')
-        raise FileNotFoundError(f'Filepath {filepath} not found')
-
     # Check if the extension is correct
     extension = filepath.split('.')[-1]
     if extension != 'xlsx':
         logger.error(f'{filepath} is not an Excel file')
-        raise
+        return None
+
+    # Check if filepath exists
+    if not os.path.exists(filepath):
+        logger.error(f'Filepath {filepath} not found')
+        return None
+        # raise FileNotFoundError(f'Filepath {filepath} not found')
 
     # Load data
     try:
@@ -110,14 +110,14 @@ def load_excel(filepath):
         # Check if file is empty
         if data.empty:
             logger.error(f'{filepath} is empty')
-            raise
+            return None
         logger.info(f'Successfully loaded {filepath}')
         return data
     # Handle exceptions
     except Exception as e:
         error = traceback.format_exc()
         logger.error(f'Could not load {filepath}:\n{error}')
-        raise
+        return None
   
 def load_text(filepath):
     """Load Excel file with error handling.
@@ -130,17 +130,17 @@ def load_text(filepath):
         
     TODO: Add error handling and logging
     """
-
-    # Check if filepath exists
-    if not os.path.exists(filepath):
-        logger.error(f'Filepath {filepath} not found')
-        raise FileNotFoundError(f'Filepath {filepath} not found')
-
     # Check if the extension is correct
     extension = filepath.split('.')[-1]
     if extension != 'txt':
         logger.error(f'{filepath} is not a .txt file')
-        raise
+        return None
+
+    # Check if filepath exists
+    if not os.path.exists(filepath):
+        logger.error(f'Filepath {filepath} not found')
+        return None
+        raise FileNotFoundError(f'Filepath {filepath} not found')
 
     try:
         with open(filepath, 'rb') as file:
@@ -153,11 +153,11 @@ def load_text(filepath):
             return data_cleaned
         else:
             logger.error(f'{filepath} is empty')
-            raise
+            return None
 
     except Exception as e:
         error = traceback.format_exc()
         logger.error(f'Could not load {filepath}:\n{error}')
-        raise
+        return None
 
 
