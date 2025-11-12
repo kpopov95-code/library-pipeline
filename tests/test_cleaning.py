@@ -142,6 +142,7 @@ def test_standardize_dates(sample_df_with_dates):
         'id': [1,2,3,4],
         'date': dates
     })
+    expected.date = expected.date.dt.date
     pdt.assert_frame_equal(result, expected)
 
 def test_format_dates():
