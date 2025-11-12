@@ -77,6 +77,38 @@ def handle_missing_values(df, strategy='drop', fill_value=None, columns=None):
 
     return df
 
+def format_dates(date, preferred_sep='-'):
+    if not isinstance(date, str):
+        return date
+    if '-' in date:
+        sep = '-'
+    elif '_' in date:
+        sep = '_'
+    elif '/' in date:
+        sep = '/'
+    else:
+        return date
+    parts = date.split(sep)
+    if len(parts[0]) == 4 and parts[0].isdigit():
+        if parts[1].isdigit() and int(parts[1]) <= 12:
+            form = f'YYYY{sep}MM{sep}DD'
+        else:
+            return date.replace(sep, preferred_sep)
+    elif len(parts[0]) == 2 or len(parts[0]) == 1:
+        if parts[1].isdigit() and int(parts[1]) <= 12:
+            form = f'DD{sep}MM{sep}YYYY'
+        elif parts[1].isdigit() and int(parts[1]) > 12:
+            form = f'MM{sep}DD{sep}YYYY'
+    else:
+        return date.replace(sep, preferred_sep)
+
+    if form == f'DD{sep}MM{sep}YYYY':
+        return f'{parts[2]}{preferred_sep}{parts[1]}{preferred_sep}{parts[0]}'
+    elif form == f'MM{sep}DD{sep}YYYY':
+        return f'{parts[2]}{preferred_sep}{parts[0]}{preferred_sep}{parts[1]}'
+    elif form == f'YYYY{sep}MM{sep}DD':
+        return date.replace(sep, preferred_sep)
+
 def standardize_dates(df, date_columns, date_format='%Y-%m-%d'):
     """Standardize date columns to consistent format.
 
@@ -105,6 +137,7 @@ def standardize_dates(df, date_columns, date_format='%Y-%m-%d'):
             continue
 
         try:
+            df[col] = df[col].apply(format_dates)
             df[col] = pd.to_datetime(df[col], errors='coerce')
             logger.info(f"Standardized dates in column: {col}")
         except Exception as e:

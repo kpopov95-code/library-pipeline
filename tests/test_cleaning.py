@@ -11,7 +11,8 @@ from src.data_processing.cleaning import (
     remove_duplicates,
     handle_missing_values,
     standardize_dates,
-    standardise_isbn
+    standardise_isbn,
+    format_dates
 )
 
 # ========================================
@@ -142,6 +143,28 @@ def test_standardize_dates(sample_df_with_dates):
         'date': dates
     })
     pdt.assert_frame_equal(result, expected)
+
+def test_format_dates():
+    samples = [
+        '2025-01-16',
+        '2025/01/16',
+        '2025_01_16',
+        '16-01-2025',
+        '16/01/2025',
+        '16_01_2025',
+        '01-16-2025',
+        '01/16/2025',
+        '01_16_2025'
+        ]
+    samples_incorrect = [
+        'Unknown',
+        None, 
+        10
+        ]
+    for sample in samples:
+        assert format_dates(sample) == '2025-01-16'
+    for sample in samples_incorrect:
+        assert format_dates(sample) == sample
 
 # ========================================
 # TESTS FOR standardize_isbn()
