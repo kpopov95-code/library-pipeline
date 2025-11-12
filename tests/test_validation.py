@@ -8,5 +8,4 @@ def test_validate_isbn():
     assert validate_isbn('invalid') == False
     assert validate_isbn('123') == False  # Too short
     assert validate_isbn('') == False
-    assert validate_isbn(None) == True  # ❌ BUG! Should be False
-    
+    assert validate_isbn(None) == False
