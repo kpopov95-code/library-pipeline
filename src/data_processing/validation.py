@@ -16,7 +16,7 @@ def validate_isbn(isbn):
         return False
 
     # Remove hyphens
-    isbn = isbn.replace('-', '')
+    isbn = str(isbn).replace('-', '')
 
     # Check length
     if len(isbn) != 13:
