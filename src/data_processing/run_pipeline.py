@@ -18,15 +18,18 @@ Run this from the command line as follows:
 
 import re
 import pandas as pd
+import sys
 from pathlib import Path
 from datetime import datetime
-
+sys.path.append('C:/Users/Admin/Documents/GitHub/library-pipeline/src/data_processing')
 # Import our custom functions
 from src.data_processing.ingestion import load_csv, load_json, load_excel
 from src.data_processing.cleaning import (
     remove_duplicates,
     handle_missing_values,
-    standardize_dates
+    standardize_dates,
+    standardise_isbn,
+    format_dates
 )
 from src.data_processing.validation import validate_isbn
 
@@ -92,6 +95,12 @@ def process_circulation_data():
     df = load_csv('data/circulation_data.csv')
     print_dataframe_info(df, "Raw data")
 
+    # Standardise ISBN column
+    df = standardise_isbn(df, 'isbn')
+
+    # Standardise date columns
+    df = standardize_dates(df, ['checkout_date', 'return_date'])
+
     # Step 2: Remove duplicates
     print("\n[2/4] Removing duplicates...")
     df_clean = remove_duplicates(df, subset=['transaction_id'])
@@ -102,6 +111,9 @@ def process_circulation_data():
     print("\n[3/4] Handling missing values...")
     df_clean = handle_missing_values(df_clean, strategy='drop')
     print("  - Dropped rows with missing values")
+
+    # Remove blank spaces from branch_id column
+    df_clean.branch_id = df_clean.branch_id.str.strip()
 
     # Step 4: Save cleaned data
     print("\n[4/4] Saving cleaned data...")
@@ -128,6 +140,9 @@ def process_events_data():
     print("\n[1/3] Loading raw data...")
     df = load_json('data/events_data.json')
     print_dataframe_info(df, "Raw data")
+
+    # Standardise dates
+    df = standardize_dates(df, ['date'])
 
     # Step 2: Handle missing values
     print("\n[2/3] Handling missing values...")
@@ -161,8 +176,15 @@ def process_catalogue_data():
     df = load_excel('data/catalogue.xlsx')
     print_dataframe_info(df, "Raw data")
 
+    # Standardise ISBN column
+    df = standardise_isbn(df)
+
+    # Standardise dates
+    df = standardize_dates(df, ['Acquisition Date'])
+
     # Step 2: Remove duplicates
     print("\n[2/4] Removing duplicates...")
+    
     df_clean = remove_duplicates(df, subset=['ISBN'])
     rows_removed = len(df) - len(df_clean)
     print(f"  - Removed {rows_removed:,} duplicate rows")
