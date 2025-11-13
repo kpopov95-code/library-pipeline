@@ -178,3 +178,5 @@ def test_standardise_isbn(sample_with_isbn):
         'isbn': ['97801155422900', '9780252112487', '9780115153892']
 
     })
+    pdt.assert_frame_equal(result, expected)
+    
